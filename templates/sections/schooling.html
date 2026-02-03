@@ -1,0 +1,32 @@
+<section id="schooling" class="projects-container">
+    <h2 class="section-title" data-aos="fade-right">Schooling (HSC & SSC)</h2>
+    <div class="project-card" style="padding: 0; overflow-x: auto; border-radius: 20px;" data-aos="fade-up">
+        <table class="edu-table">
+            <thead>
+                <tr>
+                    <th>LEVEL</th>
+                    <th>INSTITUTION</th>
+                    <th>UNIVERSITY</th>
+                    <th>YEAR</th>
+                    <th>GRADE</th>
+                    <th>HIGHLIGHT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for school in schooling %}
+                <tr>
+                    <td>
+                        <strong>{{ school.level }}</strong><br>
+                        <small style="color: #94a3b8; font-size: 0.75rem;">{{ school.sub }}</small>
+                    </td>
+                    <td>{{ school.institution }}</td>
+                    <td>{{ school.university }}</td>
+                    <td>{{ school.year }}</td>
+                    <td style="color: var(--primary); font-weight: 700;">{{ school.grade }}</td>
+                    <td>{{ school.highlight }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>

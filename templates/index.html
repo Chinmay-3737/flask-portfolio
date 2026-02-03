@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% include 'sections/hero.html' %}
+{% include 'sections/bio.html' %}
+{% include 'sections/education.html' %}
+{% include 'sections/schooling.html' %}
+
+<section id="projects" class="projects-container">
+    <h2 class="section-title" data-aos="fade-right">Selected Works</h2>
+    {% include 'projects.html' %}
+</section>
+
+{% include 'sections/experience.html' %}
+{% include 'sections/expertise.html' %}
+{% include 'sections/awards.html' %}
+{% include 'sections/mission.html' %}
+{% include 'sections/contact.html' %}
+{% include 'sections/footer.html' %}
+{% endblock %}

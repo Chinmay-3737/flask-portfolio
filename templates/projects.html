@@ -1,0 +1,14 @@
+<div class="projects-grid">
+    {% for project in projects %}
+    <div class="project-card" data-aos="fade-up">
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.desc }}</p>
+        <div class="tags">
+            {% for tech in project.tech %}
+            <span>#{{ tech }}</span>
+            {% endfor %}
+        </div>
+        <a href="{{ project.link }}" class="project-link">View Project &rarr;</a>
+    </div>
+    {% endfor %}
+</div>
