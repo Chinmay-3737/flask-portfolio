@@ -46,5 +46,7 @@ def home():
                             schooling=SCHOOLING, 
                            contact=CONTACT_INFO)
 
+app = app # This line helps Vercel identify the Flask object
+
 if __name__ == '__main__':
     app.run(debug=True)
