@@ -10,6 +10,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+
+    <style>
+        /* For Chrome, Safari, and newer versions of Edge */
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* For Firefox and IE/Legacy Edge */
+        html, body {
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+    </style>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
@@ -17,29 +31,133 @@
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
 </head>
 <body>
+    
+    <div id="splash-screen">
+        <canvas id="network-canvas"></canvas>
+
+        <div class="loader-visual">
+            <div class="initials-core">CC</div>
+            <div class="data-ring outer"></div>
+            <div class="data-ring inner"></div>
+        </div>
+        <div class="loading-text">System Initialization</div>
+    </div>
+
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
     <canvas id="bg-canvas"></canvas>
 
     <nav>
-    <div class="logo">Chinmay<span class="cosmic-glow"> Chaudhari.</span></div>
-    <div class="nav-links">
-        <a href="/" class="nav-item">Home</a>
-        <a href="#projects" class="nav-item">Projects</a>
-        <a href="#contact" class="nav-item">Contact</a>
-    </div>
-</nav>
+        <div class="logo">Chinmay<span class="cosmic-glow"> Chaudhari.</span></div>
+        <div class="nav-links">
+            <a href="/" class="nav-item">Home</a>
+            <a href="#projects" class="nav-item">Projects</a>
+            <a href="#contact" class="nav-item">Contact</a>
+        </div>
+    </nav>
 
     {% block content %}{% endblock %}
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        // 1. Smooth Scroll (Lenis)
+        // --- 1. Splash Screen Logic ---
+        window.addEventListener('load', function() {
+            const splash = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splash.classList.add('splash-hidden');
+            }, 2400); 
+        });
+
+        // --- 2. Neural Network Background Logic ---
+        const netCanvas = document.getElementById('network-canvas');
+        const netCtx = netCanvas.getContext('2d');
+        let dots = [];
+        
+        const mouse = {
+            x: null,
+            y: null,
+            radius: 170 
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function initNetwork() {
+            netCanvas.width = document.documentElement.clientWidth;
+            netCanvas.height = document.documentElement.clientHeight;
+            dots = [];
+            // Optimize particle count for mobile
+            const isMobile = window.innerWidth < 768;
+            const dotCount = isMobile ? 40 : 100;
+
+            for (let i = 0; i < dotCount; i++) { 
+                dots.push({
+                    x: Math.random() * netCanvas.width,
+                    y: Math.random() * netCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+        }
+
+        function drawNetwork() {
+            netCtx.clearRect(0, 0, netCanvas.width, netCanvas.height);
+            netCtx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+            netCtx.fillStyle = 'rgba(56, 189, 248, 0.8)';
+            
+            dots.forEach((d, i) => {
+                d.x += d.vx;
+                d.y += d.vy;
+                
+                if (mouse.x !== null && mouse.y !== null) {
+                    let dx = mouse.x - d.x;
+                    let dy = mouse.y - d.y;
+                    let distance = Math.hypot(dx, dy);
+
+                    if (distance < mouse.radius) {
+                        d.x += dx * 0.02;
+                        d.y += dy * 0.02;
+                    }
+                }
+
+                if (d.x < 0 || d.x > netCanvas.width) d.vx *= -1;
+                if (d.y < 0 || d.y > netCanvas.height) d.vy *= -1;
+                
+                netCtx.beginPath();
+                netCtx.arc(d.x, d.y, 2, 0, Math.PI * 2);
+                netCtx.fill();
+                
+                for (let j = i + 1; j < dots.length; j++) {
+                    const d2 = dots[j];
+                    const dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+                    if (dist < 180) {
+                        netCtx.lineWidth = 1.5 * (1 - dist / 180);
+                        netCtx.beginPath();
+                        netCtx.moveTo(d.x, d.y);
+                        netCtx.lineTo(d2.x, d2.y);
+                        netCtx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(drawNetwork);
+        }
+
+        initNetwork();
+        drawNetwork();
+
+        // --- 3. Smooth Scroll (Lenis) ---
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        // 2. Magnetic Cursor
+        // --- 4. Magnetic Cursor ---
         const dot = document.querySelector(".cursor-dot");
         const outline = document.querySelector(".cursor-outline");
         window.addEventListener("mousemove", (e) => {
@@ -47,13 +165,12 @@
             gsap.to(outline, { x: e.clientX, y: e.clientY, duration: 0.3 });
         });
 
-        // 3. Three.js Cosmic Space Engine
+        // --- 5. Three.js Cosmic Space Engine ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg-canvas'), alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        // Starfield
         const starGeometry = new THREE.BufferGeometry();
         const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8 });
         const starVertices = [];
@@ -64,7 +181,6 @@
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
-        // Floating Crystals (Tetrahedrons)
         const crystals = new THREE.Group();
         for(let i=0; i<35; i++) {
             const geom = new THREE.TetrahedronGeometry(Math.random() * 1.5);
@@ -76,7 +192,6 @@
         }
         scene.add(crystals);
 
-        // Main Animated Torus
         const geometry = new THREE.TorusGeometry(10, 3, 20, 100);
         const material = new THREE.MeshStandardMaterial({ color: 0x38bdf8, wireframe: true, emissive: 0x0ea5e9, emissiveIntensity: 0.5 });
         const torus = new THREE.Mesh(geometry, material);
@@ -87,12 +202,32 @@
         scene.add(light, new THREE.AmbientLight(0xffffff, 0.4));
         camera.position.z = 40;
 
-        // Interaction
         let mouseX = 0, mouseY = 0;
         window.addEventListener('mousemove', (e) => {
             mouseX = (e.clientX - window.innerWidth/2) / 150;
             mouseY = (e.clientY - window.innerHeight/2) / 150;
         });
+
+        // Unified Responsive Handler
+        window.addEventListener('resize', () => {
+            // Update Splash Network
+            initNetwork();
+
+            // Update Three.js Camera & Renderer
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Scale background torus for mobile to prevent overlap
+            if(window.innerWidth < 768) {
+                torus.scale.set(0.6, 0.6, 0.6);
+            } else {
+                torus.scale.set(1, 1, 1);
+            }
+        });
+
+        // Trigger initial scale check
+        if(window.innerWidth < 768) torus.scale.set(0.6, 0.6, 0.6);
 
         function animate() {
             requestAnimationFrame(animate);
@@ -105,12 +240,16 @@
         }
         animate();
 
-        // 4. Typing & Entrance
+        // --- 6. Typing & Entrance ---
         AOS.init({ duration: 1000 });
-        new Typed('#typed', {
-            strings: ['Data Analyst', 'Data Engineer', 'UI/UX Designer'],
-            typeSpeed: 60, backSpeed: 40, loop: true
-        });
+        if(document.querySelector('#typed')) {
+            new Typed('#typed', {
+                strings: ['Data Analyst', 'Data Engineer', 'UI/UX Designer'],
+                typeSpeed: 60, 
+                backSpeed: 40, 
+                loop: true
+            });
+        }
     </script>
 </body>
 </html>
