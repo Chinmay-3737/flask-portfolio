@@ -77,7 +77,7 @@ nav {
 .nav-links a:hover { 
     color: #ffffff;
     text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 
-                 0 0 20px rgba(56, 189, 248, 0.4);
+                  0 0 20px rgba(56, 189, 248, 0.4);
     transform: translateY(-2px);
 }
 
@@ -132,23 +132,29 @@ nav {
 }
 
 .btn-main {
-    display: inline-block; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 40px; 
     padding: 18px 45px;
     background: var(--primary); 
-    color: #000; 
+    color: #ffffff !important; /* Changed to White for better visibility */
     text-decoration: none;
     font-weight: 800; 
     border-radius: 50px; 
+    border: none; /* Remove any default borders causing the double look */
     transition: 0.4s;
     box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    cursor: none !important; /* Hide system cursor to show your custom one */
+    position: relative;
+    z-index: 10;
 }
 
 .btn-main:hover { 
-    transform: scale(1.05); 
+    transform: scale(1.05) translateY(-5px); 
     box-shadow: 0 0 40px rgba(56, 189, 248, 0.7); 
+    color: #ffffff !important;
 }
-
 /* --- Project Cards & Expertise --- */
 .projects-container { 
     padding: 100px 8%; 
@@ -308,7 +314,7 @@ nav {
 .cosmic-glow {
     color: var(--primary);
     text-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 
-                 0 0 40px rgba(56, 189, 248, 0.4);
+                  0 0 40px rgba(56, 189, 248, 0.4);
 }
 
 .footer-right {
@@ -371,6 +377,14 @@ nav {
     text-decoration: none;
     font-weight: 800;
     transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    outline: none;
+    -webkit-appearance: none;
+    border: none !important;
+    outline: none !important;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--primary);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4); /* Only one shadow */
 }
 
 .contact-btn:hover {
@@ -416,7 +430,7 @@ nav {
     color: #ffffff;
     /* Neon glow matching your logo */
     text-shadow: 0 0 10px rgba(56, 189, 248, 0.8), 
-                 0 0 20px rgba(56, 189, 248, 0.4);
+                  0 0 20px rgba(56, 189, 248, 0.4);
     transform: translateX(10px); /* Subtle slide to the right */
 }
 
@@ -801,3 +815,163 @@ nav {
 }
 
 
+/* --- Contact Modal & Glassmorphism Styles --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.9); /* Matches var(--bg-dark) with opacity */
+    backdrop-filter: blur(15px);
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 11000; /* Higher than Splash Screen */
+}
+
+/* --- Fix for Modal Buttons & Textarea --- */
+.modal-content .input-group textarea,
+.modal-content input[type="text"],
+.modal-content input[type="email"] {
+    width: 100%;
+    background: transparent !important; /* Removes the white/gray background */
+    border: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important; /* Single bottom line */
+    color: #fff !important; /* White text */
+    padding: 15px 0 !important;
+    font-size: 1.1rem;
+    outline: none !important;
+    font-family: inherit;
+    resize: none;
+    transition: border-color 0.3s ease;
+}
+
+/* Highlight the line when you click inside the box */
+.modal-content input:focus,
+.modal-content textarea:focus {
+    border-bottom: 1px solid var(--primary) !important;
+}
+
+/* Ensure the background stays transparent even if the browser tries to autofill */
+.modal-content input:-webkit-autofill,
+.modal-content input:-webkit-autofill:hover, 
+.modal-content input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff !important;
+    -webkit-box-shadow: 0 0 0px 1000px #020617 inset !important; /* Matches your --bg-dark */
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Fixes the spacing for the input groups */
+.modal-content .input-group {
+    margin-top: 20px !important;
+    border-bottom: none !important; /* Removes the extra container line */
+}
+
+/* ADDED: Placeholder styling */
+.modal-content ::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.modal-title {
+    font-size: 2.8rem;
+    line-height: 1.1;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.modal-subtitle {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+}
+
+/* Make the 'Next' and 'Finish' buttons glow */
+.modal-content .btn-next {
+    background: var(--primary) !important; /* Forces your cyan color */
+    color: #000 !important;
+    border: none !important;
+    padding: 12px 35px !important;
+    border-radius: 50px !important; /* Makes it perfectly rounded */
+    font-weight: 700 !important;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    transition: 0.3s ease;
+    text-transform: none; /* Keeps text looking natural */
+}
+
+.modal-content .btn-next:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
+}
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.3s;
+}
+
+.close-modal:hover {
+    opacity: 1;
+}
+
+/* Mobile Adjustments for Modal */
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 40px 20px;
+    }
+    .modal-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* --- UI Layering & Cursor Fixes --- */
+.cursor-dot {
+    z-index: 12000 !important; /* Forces cursor above the Modal (z-index 11000) */
+    pointer-events: none; /* Let clicks pass through to buttons */
+}
+
+.cursor-outline {
+    z-index: 11999 !important;
+    pointer-events: none;
+}
+
+/* Ensure background canvases don't block button clicks */
+#bg-canvas, #network-canvas, body::after {
+    pointer-events: none;
+}
+
+/* Fix for buttons and links hidden by layers */
+.btn-main, .nav-links a, .project-link, .social-icon {
+    position: relative;
+    z-index: 10;
+    cursor: none !important; /* Keeps your custom cursor active */
+}
+
+/* Ensure the modal overlay properly hides the default mouse */
+.modal-overlay {
+    cursor: none;
+}
+
+/* Final safety for hidden splash screen */
+.splash-hidden {
+    pointer-events: none;
+    display: none; 
+}

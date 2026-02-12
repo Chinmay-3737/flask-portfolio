@@ -29,6 +29,13 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://unpkg.com/typed.js@2.0.16/dist/typed.umd.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("Dk4WL6IEyCVGIYi00"); // Your Public Key
+       })();
+    </script>
 </head>
 <body>
     
@@ -41,6 +48,33 @@
             <div class="data-ring inner"></div>
         </div>
         <div class="loading-text">System Initialization</div>
+    </div>
+
+    <div id="contact-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeContactForm()">&times;</span>
+            
+            <form id="contact-form">
+                <h1 class="modal-title">Let's make something <br><span class="cosmic-glow">unapologetically awesome</span> together</h1>
+                <p class="modal-subtitle">Direct message to Chinmay's Gmail</p>
+
+                <div class="input-group">
+                    <input type="text" name="from_name" id="user-name" placeholder="What's your name?" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="email" name="user_email" id="user-email" placeholder="yourname@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <textarea name="message" id="user-message" placeholder="Tell me briefly about your project or why you're reaching out..." required></textarea>
+                </div>
+                
+                <div class="modal-footer" style="justify-content: flex-end;">
+                    <button type="submit" class="btn-next">Send Message</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="cursor-dot"></div>
@@ -60,43 +94,82 @@
 
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script>
-        // --- 1. Splash Screen Logic ---
+        // --- Modal & Email Logic ---
+        function openContactForm() {
+            document.getElementById('contact-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeContactForm() {
+            document.getElementById('contact-modal').style.display = 'none';
+            document.body.style.overflow = 'auto'; 
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('contact-modal');
+            if (event.target == modal) {
+                closeContactForm();
+            }
+        }
+
+        // EmailJS Submission Handler
+        const contactForm = document.getElementById('contact-form');
+        contactForm.onsubmit = function(event) {
+            event.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const emailInput = document.getElementById('user-email').value;
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
+                alert("Please enter a valid email address!");
+                return;
+            }
+
+            submitBtn.innerText = "Sending...";
+            submitBtn.disabled = true;
+
+            emailjs.sendForm('service_xmo27e7', 'template_jw6g3e7', this)
+                .then(function() {
+                    document.querySelector('.modal-content').innerHTML = `
+                        <span class="close-modal" onclick="closeContactForm()">&times;</span>
+                        <h1 class="modal-title cosmic-glow">Message Sent!</h1>
+                        <p class="modal-subtitle">Thanks! Your message has been delivered to my Gmail.</p>
+                        <button class="btn-next" style="margin-top:20px" onclick="closeContactForm()">Close</button>
+                    `;
+                }, function(error) {
+                    alert("FAILED... " + JSON.stringify(error));
+                    submitBtn.innerText = "Send Message";
+                    submitBtn.disabled = false;
+                });
+        };
+
+        // --- 1. Splash Screen Logic & URL Hash Cleaner ---
         window.addEventListener('load', function() {
             const splash = document.getElementById('splash-screen');
             setTimeout(() => {
                 splash.classList.add('splash-hidden');
             }, 2400); 
+
+            // Remove the #projects from the URL without reloading
+            if (window.location.hash) {
+                history.replaceState(null, null, ' ');
+            }
         });
 
         // --- 2. Neural Network Background Logic ---
         const netCanvas = document.getElementById('network-canvas');
         const netCtx = netCanvas.getContext('2d');
         let dots = [];
-        
-        const mouse = {
-            x: null,
-            y: null,
-            radius: 170 
-        };
-
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        window.addEventListener('mouseout', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
+        const mouse = { x: null, y: null, radius: 170 };
+        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
 
         function initNetwork() {
             netCanvas.width = document.documentElement.clientWidth;
             netCanvas.height = document.documentElement.clientHeight;
             dots = [];
-            // Optimize particle count for mobile
             const isMobile = window.innerWidth < 768;
             const dotCount = isMobile ? 40 : 100;
-
             for (let i = 0; i < dotCount; i++) { 
                 dots.push({
                     x: Math.random() * netCanvas.width,
@@ -111,46 +184,27 @@
             netCtx.clearRect(0, 0, netCanvas.width, netCanvas.height);
             netCtx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
             netCtx.fillStyle = 'rgba(56, 189, 248, 0.8)';
-            
             dots.forEach((d, i) => {
-                d.x += d.vx;
-                d.y += d.vy;
-                
+                d.x += d.vx; d.y += d.vy;
                 if (mouse.x !== null && mouse.y !== null) {
-                    let dx = mouse.x - d.x;
-                    let dy = mouse.y - d.y;
+                    let dx = mouse.x - d.x; let dy = mouse.y - d.y;
                     let distance = Math.hypot(dx, dy);
-
-                    if (distance < mouse.radius) {
-                        d.x += dx * 0.02;
-                        d.y += dy * 0.02;
-                    }
+                    if (distance < mouse.radius) { d.x += dx * 0.02; d.y += dy * 0.02; }
                 }
-
                 if (d.x < 0 || d.x > netCanvas.width) d.vx *= -1;
                 if (d.y < 0 || d.y > netCanvas.height) d.vy *= -1;
-                
-                netCtx.beginPath();
-                netCtx.arc(d.x, d.y, 2, 0, Math.PI * 2);
-                netCtx.fill();
-                
+                netCtx.beginPath(); netCtx.arc(d.x, d.y, 2, 0, Math.PI * 2); netCtx.fill();
                 for (let j = i + 1; j < dots.length; j++) {
-                    const d2 = dots[j];
-                    const dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+                    const d2 = dots[j]; const dist = Math.hypot(d.x - d2.x, d.y - d2.y);
                     if (dist < 180) {
                         netCtx.lineWidth = 1.5 * (1 - dist / 180);
-                        netCtx.beginPath();
-                        netCtx.moveTo(d.x, d.y);
-                        netCtx.lineTo(d2.x, d2.y);
-                        netCtx.stroke();
+                        netCtx.beginPath(); netCtx.moveTo(d.x, d.y); netCtx.lineTo(d2.x, d2.y); netCtx.stroke();
                     }
                 }
             });
             requestAnimationFrame(drawNetwork);
         }
-
-        initNetwork();
-        drawNetwork();
+        initNetwork(); drawNetwork();
 
         // --- 3. Smooth Scroll (Lenis) ---
         const lenis = new Lenis();
@@ -208,47 +262,44 @@
             mouseY = (e.clientY - window.innerHeight/2) / 150;
         });
 
-        // Unified Responsive Handler
         window.addEventListener('resize', () => {
-            // Update Splash Network
             initNetwork();
-
-            // Update Three.js Camera & Renderer
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-
-            // Scale background torus for mobile to prevent overlap
-            if(window.innerWidth < 768) {
-                torus.scale.set(0.6, 0.6, 0.6);
-            } else {
-                torus.scale.set(1, 1, 1);
-            }
+            if(window.innerWidth < 768) { torus.scale.set(0.6, 0.6, 0.6); } else { torus.scale.set(1, 1, 1); }
         });
 
-        // Trigger initial scale check
         if(window.innerWidth < 768) torus.scale.set(0.6, 0.6, 0.6);
 
         function animate() {
             requestAnimationFrame(animate);
-            torus.rotation.x += 0.004;
-            torus.rotation.y += 0.006;
-            stars.rotation.y += 0.0001;
+            torus.rotation.x += 0.004; torus.rotation.y += 0.006; stars.rotation.y += 0.0001;
             crystals.children.forEach(c => { c.rotation.x += 0.01; c.rotation.y += 0.01; });
             gsap.to(scene.rotation, { y: mouseX, x: mouseY, duration: 2 });
             renderer.render(scene, camera);
         }
         animate();
 
-        // --- 6. Typing & Entrance ---
         AOS.init({ duration: 1000 });
         if(document.querySelector('#typed')) {
             new Typed('#typed', {
                 strings: ['Data Analyst', 'Data Engineer', 'UI/UX Designer'],
-                typeSpeed: 60, 
-                backSpeed: 40, 
-                loop: true
+                typeSpeed: 60, backSpeed: 40, loop: true
             });
+        }
+
+        // --- 6. Force Scroll to Top Logic ---
+        window.onbeforeunload = function () {
+            window.scrollTo(0, 0);
+        };
+
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        } else {
+            window.onunload = function () {
+                window.scrollTo(0, 0);
+            };
         }
     </script>
 </body>

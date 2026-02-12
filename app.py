@@ -28,6 +28,9 @@ PROJECTS = [
     {"title": "Uber Dashboard", "desc": "Designed an Interactive Power BI Dashboard analyzing ride-sharing data.", "tech": ["Dashboard Design", "Excel", "PowerBI", "DashboardDesign"], "link": "#"},
     {"title": "Spotify Dashboard", "desc": "Designed an Interactive Power BI Dashboard analyzing music streaming data.", "tech": ["PowerBI", "Data Visualization", "DashboardDesign"], "link": "#"},
     {"title": "Portfolio Website", "desc": "A personal portfolio website to showcase projects and skills.", "tech": ["React", "CSS", "Framer Motion", "Responsive Design"], "link": "https://chinmay.corvaya.in/"},
+    {"title": "E-Commerce Customer Segmentation", "desc": "A data analysis project focused on segmenting e-commerce customers to improve targeted marketing strategies.", "tech": ["Python", "K-Means Clustering", "Pandas", "Scikit-learn"], "link": "https://github.com/Chinmay-3737/RFM_Segmentation"},
+    {"title": "Diabetes Patient Readmission Prediction", "desc": "Healthcare analytics project using machine learning to predict the likelihood of patient readmission within 30 days.", "tech": ["Machine Learning", "Healthcare Analytics", "Python", "Data Visualization"], "link": "https://github.com/Chinmay-3737/diabetes-readmission-prediction"},
+    {"title": "Retail Marketing Analytics: Growth Strategy", "desc": "An analytical project involving customer segmentation and growth strategy development for the retail sector.", "tech": ["Power BI", "SQL", "RFM Analysis", "Business Intelligence"], "link": "https://github.com/Chinmay-3737/retail-marketing-analytics"}
 ]
 
 # Add this near your other data lists in app.py
