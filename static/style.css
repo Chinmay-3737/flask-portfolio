@@ -975,3 +975,37 @@ nav {
     pointer-events: none;
     display: none; 
 }
+
+/* --- Project Detail Modal Specifics --- */
+.project-detail-card {
+    background: rgba(2, 6, 23, 0.95) !important;
+    border: 1px solid rgba(56, 189, 248, 0.3) !important;
+    box-shadow: 0 0 50px rgba(56, 189, 248, 0.15) !important;
+    padding: 50px !important;
+    border-radius: 40px !important;
+    backdrop-filter: blur(25px) !important;
+}
+
+#project-modal .modal-title {
+    font-size: 2.2rem;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+#project-modal .close-modal {
+    top: 30px;
+    right: 35px;
+    position: absolute; /* Ensures it stays in the top-right corner of the card */
+}
+
+/* Optional: Smooth fade-in for the project tags inside the modal */
+#modal-tags span {
+    display: inline-block;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
