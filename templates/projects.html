@@ -8,25 +8,55 @@
             <span>#{{ tech }}</span>
             {% endfor %}
         </div>
-        <a href="javascript:void(0)" class="project-link" onclick="openProject('{{ project.id }}')">View Project &rarr;</a>
+        <a href="javascript:void(0)" class="project-link" onclick="openProject('{{ project.id }}')">View Project
+            &rarr;</a>
     </div>
     {% endfor %}
 </div>
 
 <div id="project-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content project-detail-card" style="max-width: 600px; text-align: left;">
+    <div class="modal-content project-detail-card"
+        style="max-width: 900px; text-align: left; padding: 40px; position: relative;">
         <span class="close-modal" onclick="closeProject()">&times;</span>
-        <h2 id="modal-title" class="modal-title" style="color: var(--primary);"></h2>
-        <div id="modal-tags" class="tags" style="margin: 20px 0;"></div>
-        <p id="modal-desc" class="modal-subtitle" style="line-height: 1.6; color: #f8fafc;"></p>
-        
-        <div class="modal-footer" style="margin-top: 40px; display: flex; justify-content: flex-start;">
-            <a id="modal-link" href="#" target="_blank" class="btn-main" style="margin-top: 0; padding: 12px 30px; font-size: 0.9rem;">
-                Explore Source Code
-            </a>
+
+        <div class="modal-body-content" style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap;">
+            <!-- Left Panel: Image -->
+            <div id="modal-image-container" style="flex: 1 1 300px; display: none;">
+                <img id="modal-image" src="" alt="Project Image"
+                    style="width: 100%; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+            </div>
+
+            <!-- Right Panel: Text Content -->
+            <div id="modal-text-content" style="flex: 1 1 300px;">
+                <h2 id="modal-title" class="modal-title" style="color: var(--primary); margin-top: 0; font-size: 2rem;">
+                </h2>
+                <div id="modal-tags" class="tags" style="margin: 15px 0;"></div>
+                <p id="modal-desc" class="modal-subtitle" style="line-height: 1.6; color: #f8fafc; font-size: 1.05rem;">
+                </p>
+
+                <div class="modal-footer" style="margin-top: 30px; display: flex; justify-content: flex-start;">
+                    <a id="modal-link" href="#" target="_blank" class="btn-main"
+                        style="margin-top: 0; padding: 12px 30px; font-size: 0.9rem;">
+                        Explore Source Code
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Responsive adjustment for modal */
+    @media (max-width: 768px) {
+        .modal-body-content {
+            flex-direction: column;
+        }
+
+        .project-detail-card {
+            padding: 25px !important;
+        }
+    }
+</style>
 
 <script>
     // Injects the Python list into a JS variable
@@ -37,12 +67,48 @@
         if (selected) {
             document.getElementById('modal-title').innerText = selected.title;
             document.getElementById('modal-desc').innerText = selected.desc;
-            document.getElementById('modal-link').href = selected.link;
-            
+
+            const linkElement = document.getElementById('modal-link');
+            linkElement.href = selected.link;
+
+            if (selected.link.includes('github.com')) {
+                linkElement.innerText = 'Explore Source Code';
+            } else if (selected.link === '#') {
+                linkElement.innerText = 'Project Link Unavailable';
+            } else {
+                linkElement.innerText = 'Visit Live Website';
+            }
+
+            // Handle Image Visibility
+            const imgContainer = document.getElementById('modal-image-container');
+            const projectCard = document.querySelector('.project-detail-card');
+            const img = document.getElementById('modal-image');
+
+            // Reset state initially
+            imgContainer.style.display = 'none';
+            projectCard.style.maxWidth = '600px';
+            img.onload = null;
+            img.onerror = null;
+
+            if (selected.image) {
+                // Determine if image exists
+                img.onload = function () {
+                    imgContainer.style.display = 'block';
+                    projectCard.style.maxWidth = '900px';
+                };
+                img.onerror = function () {
+                    imgContainer.style.display = 'none';
+                    projectCard.style.maxWidth = '600px'; // Shrink if no image
+                };
+                img.src = `/static/${selected.image}`;
+            } else {
+                img.src = '';
+            }
+
             // Generate tags dynamically
             const tagBox = document.getElementById('modal-tags');
-            tagBox.innerHTML = selected.tech.map(t => `<span style="background: rgba(56, 189, 248, 0.1); padding: 5px 12px; border-radius: 8px; margin-right: 8px; font-size: 0.8rem;">#${t}</span>`).join('');
-            
+            tagBox.innerHTML = selected.tech.map(t => `<span style="background: rgba(56, 189, 248, 0.1); padding: 5px 12px; border-radius: 8px; margin-right: 8px; font-size: 0.8rem; display: inline-block; margin-bottom: 8px;">#${t}</span>`).join('');
+
             // Show modal with flex
             const modal = document.getElementById('project-modal');
             modal.style.display = 'flex';
@@ -54,7 +120,7 @@
     }
 
     // Close modal if user clicks outside the card
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         const modal = document.getElementById('project-modal');
         if (event.target == modal) {
             closeProject();
