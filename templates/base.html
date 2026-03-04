@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chinmay Chaudhari | Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
@@ -19,12 +21,15 @@
         }
 
         /* For Firefox and IE/Legacy Edge */
-        html, body {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
+        html,
+        body {
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
         }
     </style>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -32,13 +37,17 @@
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-       (function(){
-          emailjs.init("Dk4WL6IEyCVGIYi00"); // Your Public Key
-       })();
+        (function () {
+            emailjs.init("Dk4WL6IEyCVGIYi00"); // Your Public Key
+        })();
     </script>
 </head>
+
 <body>
-    
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-bar" id="scroll-progress"></div>
+    </div>
+
     <div id="splash-screen">
         <canvas id="network-canvas"></canvas>
 
@@ -47,29 +56,38 @@
             <div class="data-ring outer"></div>
             <div class="data-ring inner"></div>
         </div>
-        <div class="loading-text">System Initialization</div>
+        <div class="loading-wrapper">
+            <div class="loading-text">System Initialization</div>
+            <div class="splash-progress-container">
+                <div class="splash-progress-bar" id="splash-loading-bar"></div>
+            </div>
+            <div class="loading-percentage-text" id="loading-percentage">0%</div>
+        </div>
     </div>
 
     <div id="contact-modal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-modal" onclick="closeContactForm()">&times;</span>
-            
+
             <form id="contact-form">
-                <h1 class="modal-title">Let's make something <br><span class="cosmic-glow">unapologetically awesome</span> together</h1>
+                <h1 class="modal-title">Let's make something <br><span class="cosmic-glow">unapologetically
+                        awesome</span> together</h1>
                 <p class="modal-subtitle">Direct message to Chinmay's Gmail</p>
 
                 <div class="input-group">
                     <input type="text" name="from_name" id="user-name" placeholder="What's your name?" required>
                 </div>
-                
+
                 <div class="input-group">
                     <input type="email" name="user_email" id="user-email" placeholder="yourname@email.com" required>
                 </div>
 
                 <div class="input-group">
-                    <textarea name="message" id="user-message" placeholder="Tell me briefly about your project or why you're reaching out..." required></textarea>
+                    <textarea name="message" id="user-message"
+                        placeholder="Tell me briefly about your project or why you're reaching out..."
+                        required></textarea>
                 </div>
-                
+
                 <div class="modal-footer" style="justify-content: flex-end;">
                     <button type="submit" class="btn-next">Send Message</button>
                 </div>
@@ -97,15 +115,15 @@
         // --- Modal & Email Logic ---
         function openContactForm() {
             document.getElementById('contact-modal').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; 
+            document.body.style.overflow = 'hidden';
         }
 
         function closeContactForm() {
             document.getElementById('contact-modal').style.display = 'none';
-            document.body.style.overflow = 'auto'; 
+            document.body.style.overflow = 'auto';
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('contact-modal');
             if (event.target == modal) {
                 closeContactForm();
@@ -114,12 +132,12 @@
 
         // EmailJS Submission Handler
         const contactForm = document.getElementById('contact-form');
-        contactForm.onsubmit = function(event) {
+        contactForm.onsubmit = function (event) {
             event.preventDefault();
-            
+
             const submitBtn = this.querySelector('button[type="submit"]');
             const emailInput = document.getElementById('user-email').value;
-            
+
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
                 alert("Please enter a valid email address!");
                 return;
@@ -129,14 +147,14 @@
             submitBtn.disabled = true;
 
             emailjs.sendForm('service_xmo27e7', 'template_jw6g3e7', this)
-                .then(function() {
+                .then(function () {
                     document.querySelector('.modal-content').innerHTML = `
                         <span class="close-modal" onclick="closeContactForm()">&times;</span>
                         <h1 class="modal-title cosmic-glow">Message Sent!</h1>
                         <p class="modal-subtitle">Thanks! Your message has been delivered to my Gmail.</p>
                         <button class="btn-next" style="margin-top:20px" onclick="closeContactForm()">Close</button>
                     `;
-                }, function(error) {
+                }, function (error) {
                     alert("FAILED... " + JSON.stringify(error));
                     submitBtn.innerText = "Send Message";
                     submitBtn.disabled = false;
@@ -144,11 +162,36 @@
         };
 
         // --- 1. Splash Screen Logic & URL Hash Cleaner ---
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const splash = document.getElementById('splash-screen');
-            setTimeout(() => {
-                splash.classList.add('splash-hidden');
-            }, 2400); 
+            const percentText = document.getElementById('loading-percentage');
+            const loadBar = document.getElementById('splash-loading-bar');
+
+            let progress = 0;
+            const duration = 2000;
+            const intervalTime = 40;
+            const increment = (100 / (duration / intervalTime));
+
+            const loadingInterval = setInterval(() => {
+                progress += increment;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+
+                    setTimeout(() => {
+                        splash.classList.add('splash-hidden');
+
+                        // Show the scroll progress bar after the splash screen disappears
+                        const scrollContainer = document.querySelector('.scroll-progress-container');
+                        if (scrollContainer) {
+                            scrollContainer.style.opacity = '1';
+                        }
+                    }, 400); // slight pause at 100%
+                }
+
+                if (percentText) percentText.innerText = Math.floor(progress) + '%';
+                if (loadBar) loadBar.style.width = progress + '%';
+            }, intervalTime);
 
             // Remove the #projects from the URL without reloading
             if (window.location.hash) {
@@ -170,7 +213,7 @@
             dots = [];
             const isMobile = window.innerWidth < 768;
             const dotCount = isMobile ? 40 : 100;
-            for (let i = 0; i < dotCount; i++) { 
+            for (let i = 0; i < dotCount; i++) {
                 dots.push({
                     x: Math.random() * netCanvas.width,
                     y: Math.random() * netCanvas.height,
@@ -229,18 +272,18 @@
         const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8 });
         const starVertices = [];
         for (let i = 0; i < 6000; i++) {
-            starVertices.push((Math.random()-0.5)*2000, (Math.random()-0.5)*2000, -Math.random()*2000);
+            starVertices.push((Math.random() - 0.5) * 2000, (Math.random() - 0.5) * 2000, -Math.random() * 2000);
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
         const stars = new THREE.Points(starGeometry, starMaterial);
         scene.add(stars);
 
         const crystals = new THREE.Group();
-        for(let i=0; i<35; i++) {
+        for (let i = 0; i < 35; i++) {
             const geom = new THREE.TetrahedronGeometry(Math.random() * 1.5);
             const mat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.4 });
             const mesh = new THREE.Mesh(geom, mat);
-            mesh.position.set((Math.random()-0.5)*120, (Math.random()-0.5)*120, (Math.random()-0.5)*120);
+            mesh.position.set((Math.random() - 0.5) * 120, (Math.random() - 0.5) * 120, (Math.random() - 0.5) * 120);
             mesh.rotation.set(Math.random(), Math.random(), Math.random());
             crystals.add(mesh);
         }
@@ -250,7 +293,7 @@
         const material = new THREE.MeshStandardMaterial({ color: 0x38bdf8, wireframe: true, emissive: 0x0ea5e9, emissiveIntensity: 0.5 });
         const torus = new THREE.Mesh(geometry, material);
         scene.add(torus);
-        
+
         const light = new THREE.PointLight(0xffffff, 1.2);
         light.position.set(20, 20, 20);
         scene.add(light, new THREE.AmbientLight(0xffffff, 0.4));
@@ -258,8 +301,8 @@
 
         let mouseX = 0, mouseY = 0;
         window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX - window.innerWidth/2) / 150;
-            mouseY = (e.clientY - window.innerHeight/2) / 150;
+            mouseX = (e.clientX - window.innerWidth / 2) / 150;
+            mouseY = (e.clientY - window.innerHeight / 2) / 150;
         });
 
         window.addEventListener('resize', () => {
@@ -267,10 +310,10 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            if(window.innerWidth < 768) { torus.scale.set(0.6, 0.6, 0.6); } else { torus.scale.set(1, 1, 1); }
+            if (window.innerWidth < 768) { torus.scale.set(0.6, 0.6, 0.6); } else { torus.scale.set(1, 1, 1); }
         });
 
-        if(window.innerWidth < 768) torus.scale.set(0.6, 0.6, 0.6);
+        if (window.innerWidth < 768) torus.scale.set(0.6, 0.6, 0.6);
 
         function animate() {
             requestAnimationFrame(animate);
@@ -282,7 +325,7 @@
         animate();
 
         AOS.init({ duration: 1000 });
-        if(document.querySelector('#typed')) {
+        if (document.querySelector('#typed')) {
             new Typed('#typed', {
                 strings: ['Data Analyst', 'Data Engineer', 'UI/UX Designer'],
                 typeSpeed: 60, backSpeed: 40, loop: true
@@ -301,6 +344,18 @@
                 window.scrollTo(0, 0);
             };
         }
+
+        // --- 7. Scroll Progress Bar Logic ---
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const scrollBar = document.getElementById('scroll-progress');
+            if (scrollBar) {
+                scrollBar.style.width = scrolled + '%';
+            }
+        });
     </script>
 </body>
+
 </html>
