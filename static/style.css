@@ -926,7 +926,7 @@ nav {
         -webkit-overflow-scrolling: touch;
         /* Smooth scrolling for iOS */
         border-radius: 20px;
-        padding: 0;
+        padding: 0 !important;
         /* Keeps table touching the edges of the card */
     }
 
@@ -966,18 +966,73 @@ nav {
 
 
 
-    /* 2. Experience Section Adjustments */
+    /* --- Hero Section Mobile Adjustments --- */
+    .hero {
+        padding: 0 6%;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        letter-spacing: -1.5px;
+        line-height: 1.1;
+    }
+
+    .hero h2 {
+        font-size: 1.8rem;
+        margin-top: 10px;
+        line-height: 1.3;
+    }
+
+    .welcome-text {
+        letter-spacing: 2px;
+        font-size: 0.75rem;
+    }
+
+    .btn-main {
+        padding: 15px 35px;
+        font-size: 0.9rem;
+        margin-top: 25px;
+    }
+
+    /* 2. Experience Section & Global Overrides */
     .projects-container {
-        padding: 80px 5% 40px;
-        /* Reduced padding */
+        padding: 60px 4% 30px !important;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
     }
 
     .project-card {
-        padding: 30px 20px;
+        padding: 25px 20px !important;
         margin-bottom: 20px;
         width: 100%;
         backdrop-filter: blur(10px);
-        /* Enhance readability over moving background */
+    }
+
+    /* 2.1 Navigation adjustments */
+    nav {
+        padding: 15px 5%;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+    }
+
+    .nav-links a {
+        margin: 0 10px;
+        font-size: 0.85rem;
+    }
+
+    /* 2.2 Bio & Mission Overrides (force overwrite inline styles) */
+    .mission-card p, #mission .project-card p {
+        font-size: 1.1rem !important;
+        line-height: 1.5 !important;
+        margin-bottom: 15px !important;
     }
 
     /* 3. Footer Responsiveness */
@@ -1022,14 +1077,61 @@ nav {
 
 /* Specific fix for smaller Android/iPhone screens */
 @media (max-width: 480px) {
+    .hero {
+        padding: 0 6%;
+    }
+
     .hero h1 {
         font-size: 2.8rem;
+        letter-spacing: -1px;
+    }
+
+    .hero h2 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+        margin-top: 8px;
+    }
+
+    .welcome-text {
+        font-size: 0.7rem;
+        letter-spacing: 1.5px;
+        margin-bottom: 5px;
+    }
+
+    .btn-main {
+        padding: 14px 30px;
+        font-size: 0.85rem;
+        margin-top: 20px;
     }
 
     .loading-text {
         letter-spacing: 0.5em;
         /* Prevent text overflow on splash screen */
         font-size: 12px;
+    }
+
+    /* 480px generic element scaling */
+    .logo {
+        font-size: 1.25rem;
+    }
+
+    .nav-links a {
+        font-size: 0.75rem;
+        margin: 0 5px;
+    }
+
+    .mission-card p, #mission .project-card p {
+        font-size: 0.95rem !important;
+        margin-bottom: 10px !important;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+    }
+
+    .project-card {
+        padding: 20px 15px !important;
     }
 }
 
